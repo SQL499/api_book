@@ -31,8 +31,32 @@ public class BookService {
     }
 
     public Book registerBook(BookRequest request) {
-
-        return null;
+        Author author = authors.stream()
+                .filter(a->a.getId()
+                        .equals(request.authorId()))
+                .findFirst().orElse(null);
+            Category category = categories.stream()
+                    .filter(c->c.getId()
+                            .equals(request.categoryId()))
+                    .findFirst().orElse(null);
+            boolean exists = books.stream()
+                    .anyMatch(b->b.getTitle()
+                    .equals(request.title()) &&
+                            b.getAuthor().getId().equals(author.getId()));
+            if (exists) {
+                return null;
+            }
+            Book newBook = new Book(
+                    nextId++,
+                    request.title(),
+                    request.year(),
+                    request.description(),
+                    request.imageUrl(),
+                    author,
+                    category
+            );
+            books.add(newBook);
+            return newBook;
     }
 
     public Book updateBook(Long bookId, BookRequest request) {
