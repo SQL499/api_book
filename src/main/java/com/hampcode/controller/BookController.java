@@ -5,7 +5,6 @@ import com.hampcode.dto.BookRequest;
 import com.hampcode.service.BookService;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
