@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -31,12 +32,57 @@ public class BookService {
     }
 
     public Book registerBook(BookRequest request) {
+        Author author = authors.stream()
+                .filter(a -> a.getId().equals(request.authorId()))
+                .findFirst()
+                .orElse(null);
 
-        return null;
+        Category category = categories.stream()
+                .filter(c -> c.getId().equals(request.categoryId()))
+                .findFirst()
+                .orElse(null);
+
+        if (author == null || category == null) {
+            return null;
+        }
+
+        Book book = new Book(nextId++, request.title(), request.year(),
+                request.description(), request.imageUrl(), author, category);
+        books.add(book);
+        return book;
     }
 
     public Book updateBook(Long bookId, BookRequest request) {
-        return null;
+        Book existing = books.stream()
+                .filter(b -> b.getId().equals(bookId))
+                .findFirst()
+                .orElse(null);
+        if (existing == null) {
+            return null;
+        }
+
+        Author author = authors.stream()
+                .filter(a -> a.getId().equals(request.authorId()))
+                .findFirst()
+                .orElse(null);
+
+        Category category = categories.stream()
+                .filter(c -> c.getId().equals(request.categoryId()))
+                .findFirst()
+                .orElse(null);
+
+        if (author == null || category == null) {
+            return null;
+        }
+
+        existing.setTitle(request.title());
+        existing.setYear(request.year());
+        existing.setDescription(request.description());
+        existing.setImageUrl(request.imageUrl());
+        existing.setAuthor(author);
+        existing.setCategory(category);
+
+        return existing;
     }
 
 
@@ -45,7 +91,9 @@ public class BookService {
     }
 
     public List<Book> findByAuthor(Long authorId) {
-       return null;
+       return books.stream()
+               .filter(b -> b.getAuthor() != null && b.getAuthor().getId().equals(authorId))
+               .collect(Collectors.toList());
     }
 
 }
