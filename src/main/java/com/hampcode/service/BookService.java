@@ -32,15 +32,8 @@ public class BookService {
     }
 
     public Book registerBook(BookRequest request) {
-        Author author = authors.stream()
-                .filter(a -> a.getId().equals(request.authorId()))
-                .findFirst()
-                .orElse(null);
-
-        Category category = categories.stream()
-                .filter(c -> c.getId().equals(request.categoryId()))
-                .findFirst()
-                .orElse(null);
+        Author author = getAuthorById(request.authorId());
+        Category category = getCategoryById(request.categoryId());
 
         if (author == null || category == null) {
             return null;
@@ -53,23 +46,13 @@ public class BookService {
     }
 
     public Book updateBook(Long bookId, BookRequest request) {
-        Book existing = books.stream()
-                .filter(b -> b.getId().equals(bookId))
-                .findFirst()
-                .orElse(null);
+        Book existing = getBookById(bookId);
         if (existing == null) {
             return null;
         }
 
-        Author author = authors.stream()
-                .filter(a -> a.getId().equals(request.authorId()))
-                .findFirst()
-                .orElse(null);
-
-        Category category = categories.stream()
-                .filter(c -> c.getId().equals(request.categoryId()))
-                .findFirst()
-                .orElse(null);
+        Author author = getAuthorById(request.authorId());
+        Category category = getCategoryById(request.categoryId());
 
         if (author == null || category == null) {
             return null;
@@ -94,6 +77,27 @@ public class BookService {
        return books.stream()
                .filter(b -> b.getAuthor() != null && b.getAuthor().getId().equals(authorId))
                .collect(Collectors.toList());
+    }
+
+    private Author getAuthorById(Long authorId) {
+        return authors.stream()
+                .filter(a -> a.getId().equals(authorId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Category getCategoryById(Long categoryId) {
+        return categories.stream()
+                .filter(c -> c.getId().equals(categoryId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private Book getBookById(Long bookId) {
+        return books.stream()
+                .filter(b -> b.getId().equals(bookId))
+                .findFirst()
+                .orElse(null);
     }
 
 }
